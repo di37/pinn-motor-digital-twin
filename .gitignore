@@ -1,0 +1,17 @@
+# macOS metadata
+**/*.DS_Store
+
+# Python bytecode
+**/__pycache__/
+
+# Jupyter autosaves
+**/.ipynb_checkpoints/
+
+# Raw dataset (300 MB, fetched by sl-report/scripts/00a, verified against the committed fingerprint)
+sl-report/data/raw/
+
+# Transient run logs (auto-pruned after 7 days by run_logging, never results)
+**/reports/logs/
+
+# Reference PDFs (arXiv author copies, indexed in research-paper/README.md)
+research-paper/*.pdf
