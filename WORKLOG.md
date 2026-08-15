@@ -4,6 +4,7 @@ Newest day first. Every task that changes this folder gets an entry the same day
 
 ## 2026-08-15
 
+- **Contribution statement canonized.** The reviewer's one-sentence contribution added verbatim to the master plan's paper-scope section and the root README, as the sentence the project reuses wherever it describes itself.
 - **Math converted to LaTeX everywhere.** Display equations as dollar-dollar blocks (dq voltages, torque, LPTN, temperature-affine parameters, composite loss), physical quantities inline as math, dataset columns kept as code. The convention is codified in the master plan voice rules. Frozen hypotheses files carry a dated notation-only amendment.
 - **Repository named.** `pinn-motor-digital-twin`, recorded in the master plan. The local folder stays `pinn-project-eee`. Git init still lands in sl Phase A.
 - **Planning sketch retired.** `physics-informed-pmsm-digital-twin.png` moved to the Trash after its diagram, loss, and ladder were redrawn in the README. One caveat recorded: the screenshot's bottom paragraph was cut off and never recovered.

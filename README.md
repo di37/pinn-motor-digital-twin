@@ -2,7 +2,11 @@
 
 > **Can Physics-Informed Neural Networks build accurate PMSM digital twins under scarce supervision?**
 
-A PMSM digital twin must predict torque and internal temperatures from the signals an inverter already has for free: currents, voltages, and speed. Those targets are expensive to measure outside a test bench. This project asks whether embedding the motor's governing equations into the loss lets a network keep working as the expensive labels become scarce, while purely data-driven models degrade. Scarce supervision, not missing sensors: the input signals stay available everywhere, it is the labels that shrink. The comparison runs over a seven-rung ladder spanning pure physics to pure data: LPTN → XGBoost → MLP → LSTM → Transformer → TNN → PINN.
+A PMSM digital twin must predict torque and internal temperatures from the signals an inverter already has for free: currents, voltages, and speed. Those targets are expensive to measure outside a test bench. This project asks whether embedding the motor's governing equations into the loss lets a network keep working as the expensive labels become scarce, while purely data-driven models degrade. Scarce supervision, not missing sensors: the input signals stay available everywhere, it is the labels that shrink.
+
+The contribution, in one sentence:
+
+> A controlled empirical study of whether coupled electromagnetic-thermal physics improves PMSM digital-twin accuracy, uncertainty, parameter stability, and interpretability as temperature labels become scarce. The comparison runs over a seven-rung ladder spanning pure physics to pure data: LPTN → XGBoost → MLP → LSTM → Transformer → TNN → PINN.
 
 **Status: planning complete, execution not started. See [PLAN.md](PLAN.md) for the master plan.**
 

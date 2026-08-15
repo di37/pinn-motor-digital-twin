@@ -79,7 +79,9 @@ sl-report additionally owns `data/raw` (gitignored) and `data/processed` (commit
 
 ## Paper scope (added 2026-08-15 after the novelty review)
 
-The five studies are the project. The paper is narrower. Its central contribution: a controlled empirical study of whether coupled electromagnetic and thermal physics improves PMSM digital-twin accuracy, uncertainty, parameter stability, and interpretability as labels become scarce. The paper draws from sl (the ladder and the identification), ol (the sparsity ladder and uncertainty), and xai Parts 2-3 (physics-native explanation and stability under sparsity), plus one fe result (H5, physics through the inputs vs physics through the loss). ul and the rest of fe are supporting studies: they feed the appendix and the portfolio, not the paper's core claims. The reports must position against the directly-competing papers listed in `research-paper/README.md`.
+The five studies are the project. The paper is narrower. Its central contribution, stated once here and reused verbatim wherever the project describes itself:
+
+> A controlled empirical study of whether coupled electromagnetic-thermal physics improves PMSM digital-twin accuracy, uncertainty, parameter stability, and interpretability as temperature labels become scarce. The paper draws from sl (the ladder and the identification), ol (the sparsity ladder and uncertainty), and xai Parts 2-3 (physics-native explanation and stability under sparsity), plus one fe result (H5, physics through the inputs vs physics through the loss). ul and the rest of fe are supporting studies: they feed the appendix and the portfolio, not the paper's core claims. The reports must position against the directly-competing papers listed in `research-paper/README.md`.
 
 ## Approval and sequencing
 
