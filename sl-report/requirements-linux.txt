@@ -1,0 +1,12 @@
+# sl-report pip requirements, Linux. Mirrors requirements-macos.txt, which is
+# the run of record and carries the frozen pins.
+torch>=2.7,<2.9
+numpy>=2.0,<3
+pandas>=2.3
+scipy>=1.14
+scikit-learn>=1.7
+xgboost>=2.1
+matplotlib>=3.9
+pyarrow>=17
+jupyter
+kagglehub>=0.3

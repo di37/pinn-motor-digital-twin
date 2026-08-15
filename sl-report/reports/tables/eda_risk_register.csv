@@ -1,0 +1,7 @@
+risk,kind,handling
+pm~coolant confound (load drives both),confound,"no causal reading, noted for xai attribution reading"
+constant-torque soak segments up to 134 min,data quirk,"classified as test design (nb01 section 6), sessions kept"
+"implicit 2 Hz clock, no timestamp column",assumption,"recorded in data dictionary, consistency-checked against thermal timescales"
+block truncation of thermal arcs,sampling,"measured by G2/G3 below, gate decides"
+one-step persistence looks strong on slow targets,evaluation,"5-min persistence is the quoted floor, 1-step reported as anchor only"
+session-shift gap between train and validation,distribution shift,tripwire uses self-calibrating 3x median-gap trigger

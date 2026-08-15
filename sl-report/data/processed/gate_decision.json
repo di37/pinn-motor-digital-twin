@@ -1,0 +1,6 @@
+{
+  "decision": "full-dataset",
+  "decided_by": "user",
+  "date": "2026-08-16",
+  "reason": "gate failed G1 (coolant quantile shift 0.122 > 0.05) and G2 (thermal-arc capture 0.253 < 0.6) on the 100k candidate; G3 passed (0.625)"
+}

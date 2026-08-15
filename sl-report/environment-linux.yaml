@@ -1,0 +1,10 @@
+# sl-report conda environment, Linux spec (libraries verified to import).
+# Mirrors environment-macos.yaml, the macOS environment is the run of record.
+name: pinn-sl
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pip
+  - pip:
+      - -r requirements-linux.txt

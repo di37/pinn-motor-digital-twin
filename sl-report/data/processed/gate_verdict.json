@@ -1,0 +1,12 @@
+{
+  "g1_jaccard": 0.9424460431654677,
+  "g1_pass": false,
+  "g1_worst_shift": 0.12152571632799174,
+  "g1_worst_shift_signal": "coolant",
+  "g2_arc_capture": 0.25274689690124064,
+  "g2_pass": false,
+  "g3_blocks": 40,
+  "g3_curved_frac": 0.625,
+  "g3_pass": true,
+  "gate_pass": false
+}

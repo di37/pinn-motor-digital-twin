@@ -1,0 +1,14 @@
+column,description,unit,dtype,role,valid_min,valid_max,observed_min,observed_max,assumption
+u_q,q-axis stator voltage in the rotor-fixed dq frame,V,float64,input,-150,150,-25.29,133.04,
+coolant,coolant outflow temperature of the liquid cooling circuit,deg C,float64,input,0,200,10.62,101.6,
+stator_winding,"stator winding temperature, thermocouple",deg C,float64,target,0,200,18.59,141.36,
+u_d,d-axis stator voltage in the rotor-fixed dq frame,V,float64,input,-150,150,-131.53,131.47,
+stator_tooth,"stator tooth temperature, thermocouple",deg C,float64,audited signal (target dropped 2026-08-15),0,200,18.13,111.95,
+motor_speed,"mechanical rotor speed, negative values are genuine reversals",rpm,float64,input,-6100,6100,-275.55,6000.02,
+i_d,"d-axis stator current, held at or below zero by MTPA and field-weakening control",A,float64,input,-320,5,-278.0,0.05,"max observed +0.05 A is measurement jitter at the MTPA rail, not a violation"
+i_q,q-axis (torque-forming) stator current,A,float64,input,-320,320,-293.43,301.71,
+pm,"permanent-magnet (rotor) surface temperature via bench telemetry, the headline target",deg C,float64,target,0,200,20.86,113.61,"no production sensor exists for this quantity, bench-only label"
+stator_yoke,"stator yoke temperature, thermocouple",deg C,float64,audited signal (target dropped 2026-08-15),0,200,18.08,101.15,
+ambient,ambient air temperature near the test bench,deg C,float64,input,0,60,8.78,30.71,
+torque,"measured shaft torque, includes deliberate constant-load soak segments",Nm,float64,target,-300,300,-246.47,261.01,constant runs up to 134 min are soak segments by test design (section 6)
+profile_id,"measurement-session identifier, sessions contiguous in file order",id,int64,session key,0,100,2.0,81.0,"2 Hz implicit clock (no timestamp column), row order is time order within a session"

@@ -1,0 +1,13 @@
+# sl-report pip pins, macOS (Apple Silicon). Frozen from the pinn-sl build of
+# 2026-08-16 (python 3.12, conda-forge base). Versions are recorded again at
+# run time by scripts/07_build_repro_artifacts.py.
+torch==2.8.0
+numpy==2.5.2
+pandas==3.0.5
+scipy==1.18.0
+scikit-learn==1.9.0
+xgboost==3.4.1
+matplotlib==3.11.1
+pyarrow==25.0.1
+jupyter==1.1.1
+kagglehub==1.0.2

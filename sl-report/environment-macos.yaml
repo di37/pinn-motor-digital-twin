@@ -1,0 +1,12 @@
+# sl-report conda environment. macOS run of record (Apple Silicon, MPS backend).
+# The pip layer installs from requirements-macos.txt so the pin list lives in one
+# place. Exact versions are frozen into that file after the first successful build
+# and recorded again at run time by scripts/07_build_repro_artifacts.py.
+name: pinn-sl
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pip
+  - pip:
+      - -r requirements-macos.txt

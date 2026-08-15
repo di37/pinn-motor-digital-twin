@@ -1,0 +1,5 @@
+baseline,target,val_stop_mae
+persistence 0.5 s,pm,0.055152685454225
+persistence 5 min,pm,6.0348121721874906
+ambient anchor (linear),pm,18.555112435577225
+torque = k*i_q (least squares),torque,5.411331708297557

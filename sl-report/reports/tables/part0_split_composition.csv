@@ -1,0 +1,5 @@
+split,sessions,rows,hours
+train,32,566601,78.7
+val_stop,5,70064,9.7
+val_cal,16,342792,47.6
+test,16,351359,48.8
