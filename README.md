@@ -32,11 +32,11 @@ A PMSM digital twin must predict torque and internal temperatures from the signa
 
 The training loss is one supervised term plus four physics residuals, weighted per term:
 
-```
-L = λ_d·L_data + λ_vd·L_vd + λ_vq·L_vq + λ_T·L_torque + λ_th·L_thermal
-```
+$$
+\mathcal{L} = \lambda_d L_{\mathrm{data}} + \lambda_{vd} L_{vd} + \lambda_{vq} L_{vq} + \lambda_T L_{\mathrm{torque}} + \lambda_{th} L_{\mathrm{thermal}}
+$$
 
-`L_vd` and `L_vq` are the dq voltage-equation residuals, `L_torque` the torque-equation residual, and `L_thermal` the lumped thermal-network ODE residual. The parameter outputs are the digital-twin part: `R_s, L_d, L_q, ψ_f` drift with temperature and saturation in a real motor, and the network identifies them from data.
+$L_{vd}$ and $L_{vq}$ are the dq voltage-equation residuals, $L_{\mathrm{torque}}$ the torque-equation residual, and $L_{\mathrm{thermal}}$ the lumped thermal-network ODE residual. The parameter outputs are the digital-twin part: $R_s, L_d, L_q, \psi_f$ drift with temperature and saturation in a real motor, and the network identifies them from data.
 
 ## The five studies
 

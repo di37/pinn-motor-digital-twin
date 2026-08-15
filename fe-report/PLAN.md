@@ -18,7 +18,7 @@ Processed data and manifests from `../sl-report/data/processed/`, frozen recipes
 - **F0 - Raw:** the 7 input signals as-is. The floor.
 - **F1 - EWMA:** multi-span exponentially weighted means and standard deviations of the inputs (spans chosen on train only), the dataset authors' own practice, and sl's default feature set.
 - **F2 - Lags and differences:** short lag stacks and first differences, the cheap way to hand a pointwise model some dynamics.
-- **F3 - Physics-derived:** current magnitude `i_s = √(i_d² + i_q²)`, copper-loss proxy `i_s²`, apparent power `1.5·(u_d·i_d + u_q·i_q)`, speed-current products `ω·i_d, ω·i_q` (back-EMF and reluctance structure), coolant and ambient deltas `T − T_cool`, field-weakening indicator. Every feature is a term the dq or LPTN equations say should matter.
+- **F3 - Physics-derived:** current magnitude $i_s = \sqrt{i_d^2 + i_q^2}$, copper-loss proxy $i_s^2$, apparent power $1.5\,(u_d i_d + u_q i_q)$, speed-current products $\omega i_d,\ \omega i_q$ (back-EMF and reluctance structure), coolant and ambient deltas $T - T_{\mathrm{cool}}$, field-weakening indicator. Every feature is a term the dq or LPTN equations say should matter.
 - **F4 - Union:** F1 + F2 + F3.
 
 ## 3. Parts

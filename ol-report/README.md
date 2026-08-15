@@ -1,6 +1,6 @@
 # OL Report - Optimization & Uncertainty: Permanent Magnet Synchronous Motor (PMSM) Physics under Label Scarcity
 
-The project's headline study. The exact working sample, splits, preprocessing, tuned recipes, and checkpoints are carried over unchanged from `../sl-report`, so every result is attributable to the intervention. Five parts: λ-weighting pilot and comparison on the fixed PINN, physics-term ablation, collocation density, the 105-condition sparsity ladder (7 rungs × 5 label levels × 3 seeds), and predictive uncertainty via seed ensembles with split-conformal intervals.
+The project's headline study. The exact working sample, splits, preprocessing, tuned recipes, and checkpoints are carried over unchanged from `../sl-report`, so every result is attributable to the intervention. Five parts: $\lambda$-weighting pilot and comparison on the fixed PINN, physics-term ablation, collocation density, the 105-condition sparsity ladder (7 rungs × 5 label levels × 3 seeds), and predictive uncertainty via seed ensembles with split-conformal intervals.
 
 **Status: planned, not yet executed. Runs after sl-report. Design in [PLAN.md](PLAN.md).**
 
@@ -36,4 +36,4 @@ Notebooks 00-05 present the results (00 protocol, 01 weighting, 02 ablation, 03 
 
 ## Outputs
 
-`reports/figures/`, `reports/tables/`, `reports/logs/`, `reports/repro/`, `checkpoints/`, `artifacts/` (masks, frozen λ, calibration).
+`reports/figures/`, `reports/tables/`, `reports/logs/`, `reports/repro/`, `checkpoints/`, `artifacts/` (masks, frozen $\lambda$, calibration).

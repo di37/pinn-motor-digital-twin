@@ -16,11 +16,11 @@ Seventeen papers, collected 2026-08-15. Files are the authors' arXiv copies of p
 |---|---|---|---|
 | `2019_raissi_pinn-jcp-published.pdf` | Raissi, Perdikaris, Karniadakis, "Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations" (doi 10.1016/j.jcp.2018.10.045) | Journal of Computational Physics 378, 686-707, 2019. The publisher's version of record, merging Parts I and II | sl, ol, xai. The citation of record for every PINN claim in the reports |
 | `2019_raissi_pinn-part1.pdf` | Raissi, Perdikaris, Karniadakis, "Physics Informed Deep Learning (Part I): Data-driven Solutions" (arXiv 1711.10561) | merged into the JCP paper above | sl, ol. The founding forward-problem formulation our composite loss follows |
-| `2019_raissi_pinn-part2-discovery.pdf` | Raissi, Perdikaris, Karniadakis, "Physics Informed Deep Learning (Part II): Data-driven Discovery" (arXiv 1711.10566) | merged into the JCP paper above | sl, ol, xai. The discovery formulation: unknown physical parameters as trainable variables, which is exactly our `R_s, L_d, L_q, ψ_f` identification and the H3 recovery test |
+| `2019_raissi_pinn-part2-discovery.pdf` | Raissi, Perdikaris, Karniadakis, "Physics Informed Deep Learning (Part II): Data-driven Discovery" (arXiv 1711.10566) | merged into the JCP paper above | sl, ol, xai. The discovery formulation: unknown physical parameters as trainable variables, which is exactly our $R_s, L_d, L_q, \psi_f$ identification and the H3 recovery test |
 | `2022_cuomo_pinn-survey.pdf` | Cuomo et al., "Scientific Machine Learning through Physics-Informed Neural Networks: Where we are and What's next" (arXiv 2201.05624) | Journal of Scientific Computing, 2022 | sl, ol. The survey grounding design choices and known failure modes |
-| `2021_wang_pinn-gradient-pathologies.pdf` | Wang, Teng, Perdikaris, "Understanding and mitigating gradient pathologies in physics-informed neural networks" (arXiv 2001.04536) | SIAM Journal on Scientific Computing, 2021 | ol. Why residual terms fight each other and the learning-rate-annealed weighting that motivates the λ pilot |
+| `2021_wang_pinn-gradient-pathologies.pdf` | Wang, Teng, Perdikaris, "Understanding and mitigating gradient pathologies in physics-informed neural networks" (arXiv 2001.04536) | SIAM Journal on Scientific Computing, 2021 | ol. Why residual terms fight each other and the learning-rate-annealed weighting that motivates the $\lambda$ pilot |
 
-## Loss weighting and multi-task balance (the ol λ pilot's three candidates)
+## Loss weighting and multi-task balance (the ol $\lambda$ pilot's three candidates)
 
 | File | Paper | Peer-reviewed venue | Used by |
 |---|---|---|---|

@@ -29,7 +29,7 @@ The guide's ordering is kept exactly, because early issues distort downstream fi
 | 5. Target integrity | ranges and physical plausibility of all five targets, per-session torque quality, label balance analog = coverage of the operating envelope | temperatures outside [0, 200] °C, torque beyond ±300 Nm, sessions where torque freezes or contradicts `i_q` sign | notebook 01, section 9 |
 | 6. Leakage scan | structural: no future-encoding features exist in the raw columns, so the risks are session overlap between splits, near-duplicate sessions, and any preprocessing fit outside train | EWMA spans or scalers fit on all sessions, any feature computed across session boundaries | notebook 01, section 10, re-checked on the sample in notebook 02 |
 | 7. Distributions | histograms and boxplots per signal, per-session temperature trajectories, stationarity eyeball (temps trend, currents do not) | impossible values (`i_d` > 0 breaks the MTPA expectation from the first look, coolant above 102 °C), heavy skew worth a transform note | notebook 01, section 11, repeated on the sample in notebook 02 |
-| 8. Relationships | correlation matrix, torque vs `i_q` and vs `i_d·i_q`, `pm` vs coolant and vs `i_s²` lagged, PCA pair-plot glance (shared with ul's H2 expectation) | the guide's "too perfect" flag needs domain reading here: torque tracking `i_q` at r near 1 is physics, not leakage. Genuinely suspicious would be `pm` predictable from a single instantaneous signal | notebook 02, relationships section |
+| 8. Relationships | correlation matrix, torque vs `i_q` and vs $i_d i_q$, `pm` vs coolant and vs $i_s^2$ lagged, PCA pair-plot glance (shared with ul's H2 expectation) | the guide's "too perfect" flag needs domain reading here: torque tracking `i_q` at r near 1 is physics, not leakage. Genuinely suspicious would be `pm` predictable from a single instantaneous signal | notebook 02, relationships section |
 | 9. Baseline (optional in the guide, mandatory here) | Section 5 | near-perfect one-step persistence is expected for slow thermal states and must not be sold as skill | notebook 02, closing sections |
 
 ## 3. Univariate, bivariate, multivariate plan
@@ -49,7 +49,7 @@ The guide's ordering is kept exactly, because early issues distort downstream fi
 
 Three baselines, all trained on training sessions only, evaluated on validation sessions, never on test:
 
-1. **Persistence:** `pm(t+Δ) = pm(t)` at horizons of 1 step and 5 minutes. The 1-step version will look near-perfect and is the guide's leakage-smell lesson stated in advance: slow states make trivial predictors look strong.
+1. **Persistence:** $\mathrm{pm}(t+\Delta) = \mathrm{pm}(t)$ at horizons of 1 step and 5 minutes. The 1-step version will look near-perfect and is the guide's leakage-smell lesson stated in advance: slow states make trivial predictors look strong.
 2. **Ambient anchor:** predict each temperature as a linear function of coolant and ambient only. What "no electrical information" buys.
 3. **Physics one-liner:** torque from `i_q` alone by least squares. The near-perfect fit expected here is physics, and the gap to the full torque equation quantifies what `i_d` and saturation add.
 

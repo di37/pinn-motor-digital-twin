@@ -4,6 +4,7 @@ Newest day first. Every task that changes this folder gets an entry the same day
 
 ## 2026-08-15
 
+- **Physics section converted to LaTeX.** All equation blocks, the affine parameter head, identifiability products, and hypothesis symbols now render as math. HYPOTHESES.md carries a notation-only amendment.
 - **H3 amended and the PINN head upgraded.** H3 tolerances made per-parameter via a dated amendment (2 Hz identifiability, novelty-review input). The PINN spec now carries a temperature-affine parameter head with learnable `α_cu` and `α_mag`, so drift is learned, not refit.
 - **Hypotheses frozen.** `reports/HYPOTHESES.md` written and frozen with the study's pre-registered hypotheses. The foundation script now verifies it unchanged instead of writing it. Amendments must be dated, never silent.
 - **README.md written.** Family structure, plan-stage status, run-of-record script sequence.

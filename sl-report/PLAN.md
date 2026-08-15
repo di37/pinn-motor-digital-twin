@@ -20,23 +20,39 @@ This study owns the project's data foundation (fetch, fingerprint, working sampl
 
 `src/pmsm_physics.py` is the single source of truth: dq voltage equations, torque equation, LPTN thermal ODEs, residual functions, and unit tests. Studies that need it (ol, xai) copy it into their own `src/` and disclose the copy.
 
-```
-v_d = R_s·i_d + L_d·(di_d/dt) − ω_e·L_q·i_q
-v_q = R_s·i_q + L_q·(di_q/dt) + ω_e·(L_d·i_d + ψ_f)
-ω_e = p·ω_m
-T_e = (3/2)·p·[ψ_f·i_q + (L_d − L_q)·i_d·i_q]
-C_r·(dT_r/dt) = P_loss,r − (T_r − T_s)/R_th,rs − (T_r − T_cool)/R_th,rc
-C_s·(dT_s/dt) = P_loss,s + (T_r − T_s)/R_th,rs − (T_s − T_cool)/R_th,sc
-```
+$$
+\begin{aligned}
+v_d &= R_s i_d + L_d \frac{di_d}{dt} - \omega_e L_q i_q \\
+v_q &= R_s i_q + L_q \frac{di_q}{dt} + \omega_e \left(L_d i_d + \psi_f\right), \qquad \omega_e = p\,\omega_m
+\end{aligned}
+$$
 
-**Temperature-affine parameters (built into the PINN head, read out in xai):** `R_s(T_s) = R_s0·(1 + α_cu·(T_s − T_ref))` with `α_cu ≈ +0.39 %/K` for copper, and `ψ_f(T_r) = ψ_f0·(1 + α_mag·(T_r − T_ref))` with `α_mag < 0` for NdFeB remanence loss. The drift claim is then about learned coefficients, not post-hoc refits.
+$$
+T_e = \tfrac{3}{2}\, p \left[\, \psi_f\, i_q + (L_d - L_q)\, i_d\, i_q \,\right]
+$$
 
-Timescale argument: at 2 Hz the electrical dynamics (L/R in ms) are quasi-static, so the voltage residuals take their algebraic form (di/dt ≈ 0). Thermal dynamics (minutes to hours) stay ODE-form with finite-difference dT/dt within sessions. The synthetic track exercises the full dynamic residuals at high sample rate. Identifiability: with pole pairs p unknown, voltage equations identify `p·L_d`, `p·L_q`, `p·ψ_f`. Part 1 fixes which combinations are reported, and literature nameplate values (Kirchgässner et al.) are recorded with sources in `study_metadata.json`.
+$$
+\begin{aligned}
+C_r \frac{dT_r}{dt} &= P_{\mathrm{loss},r} - \frac{T_r - T_s}{R_{\mathrm{th},rs}} - \frac{T_r - T_{\mathrm{cool}}}{R_{\mathrm{th},rc}} \\
+C_s \frac{dT_s}{dt} &= P_{\mathrm{loss},s} + \frac{T_r - T_s}{R_{\mathrm{th},rs}} - \frac{T_s - T_{\mathrm{cool}}}{R_{\mathrm{th},sc}}, \qquad
+P_{cu} = \tfrac{3}{2} R_s \left(i_d^2 + i_q^2\right), \quad P_{fe} \propto \omega_e^{\,a}
+\end{aligned}
+$$
+
+**Temperature-affine parameters (built into the PINN head, read out in xai):**
+
+$$
+R_s(T_s) = R_{s0}\left(1 + \alpha_{cu}(T_s - T_{\mathrm{ref}})\right), \qquad \psi_f(T_r) = \psi_{f0}\left(1 + \alpha_{mag}(T_r - T_{\mathrm{ref}})\right)
+$$
+
+with $\alpha_{cu} \approx +0.39\,\%/\mathrm{K}$ for copper and $\alpha_{mag} < 0$ for NdFeB remanence loss. The drift claim is then about learned coefficients, not post-hoc refits.
+
+Timescale argument: at 2 Hz the electrical dynamics (L/R in ms) are quasi-static, so the voltage residuals take their algebraic form (di/dt ≈ 0). Thermal dynamics (minutes to hours) stay ODE-form with finite-difference dT/dt within sessions. The synthetic track exercises the full dynamic residuals at high sample rate. Identifiability: with pole pairs $p$ unknown, the voltage equations identify the products $p L_d$, $p L_q$, $p \psi_f$. Part 1 fixes which combinations are reported, and literature nameplate values (Kirchgässner et al.) are recorded with sources in `study_metadata.json`.
 
 ## 3. Parts
 
 - **Part 0 - Foundation.** Fetch/verify, fingerprint, working sample, splits, EDA, pre-registered hypotheses. The EDA follows its own companion plan, [EDA_PLAN.md](EDA_PLAN.md), built on the OMSCS 7641 EDA guide's nine-phase workflow and four deliverables, adapted to time-series sessions.
-- **Part 1 - Synthetic twin validation (diagnostic).** `src/synthetic_twin.py` simulates drive cycles with known ~50 kW-class parameters. Residual unit tests must pass at ground truth, and the PINN must recover `R_s, L_d, L_q, ψ_f` in closed loop. No real-data test contact.
+- **Part 1 - Synthetic twin validation (diagnostic).** `src/synthetic_twin.py` simulates drive cycles with known ~50 kW-class parameters. Residual unit tests must pass at ground truth, and the PINN must recover $R_s, L_d, L_q, \psi_f$ in closed loop. No real-data test contact.
 - **Part 2 - The model ladder at full labels.** Fairness rule: every learned model sees the same engineered features and labels. Sequence models add raw windows (W = 128 samples = 64 s). The PINN shares the MLP's exact inputs and trunk, so physics-in-the-loss is the only difference. The ladder now spans the full spectrum from pure physics to pure data, and each rung differs from its neighbors by one capability.
 
 | # | Model | Temporal context | Notes |
@@ -47,7 +63,7 @@ Timescale argument: at 2 Hz the electrical dynamics (L/R in ms) are quasi-static
 | B3 | LSTM | raw window + EWMA | recurrent thermal memory |
 | B4 | Transformer | raw window + EWMA | small encoder, 2-4 layers |
 | B5 | TNN | ODE state, learned | thermal-neural-network family, the published state of the art on this dataset: LPTN state integrated forward in time with learned conductances, trained by truncated backprop through time |
-| P | PINN | identical to B2 | MLP trunk + fixed scale-normalized physics residuals + a temperature-affine parameter head (`R_s0, ψ_f0, α_cu, α_mag, L_d, L_q` all learnable) |
+| P | PINN | identical to B2 | MLP trunk + fixed scale-normalized physics residuals + a temperature-affine parameter head ($R_{s0}, \psi_{f0}, \alpha_{cu}, \alpha_{mag}, L_d, L_q$ all learnable) |
 
 Small pre-registered tuning grids per model on validation only. The tuned recipes are frozen and exported for ol/fe/xai reuse.
 - **Part 2 diagnostics - learning and complexity curves.** For every rung, learning curves (performance vs training-session budget) and model-complexity curves (capacity sweeps: depth for XGBoost, width for the MLP trunk, hidden size for the sequence models), validation only. These were the analytical heart of the coursework sl notebooks and they are first-class parts here.
@@ -56,8 +72,8 @@ Small pre-registered tuning grids per model on validation only. The tuned recipe
 ## 4. Pre-registered hypotheses (frozen 2026-08-15 in `reports/HYPOTHESES.md`, verified unchanged by `00c`)
 
 - **H1:** at full supervision the stateful models (LSTM, Transformer, TNN) match or beat the PINN on `pm` (thermal memory wins when labels are abundant), and every neural model beats XGBoost on `pm`.
-- **H2:** torque is near-algebraic given currents: every model reaches R² above 0.98 on it.
-- **H3 (amended 2026-08-15, see `reports/HYPOTHESES.md`):** from full-rate synthetic data the PINN recovers all four parameters within 5 % relative error at full labels. From 2 Hz-downsampled synthetic data it recovers `R_s` and `ψ_f` within 5 % and `L_d` and `L_q` within 15 %. The rate comparison is itself a reported identifiability result.
+- **H2:** torque is near-algebraic given currents: every model reaches $R^2$ above 0.98 on it.
+- **H3 (amended 2026-08-15, see `reports/HYPOTHESES.md`):** from full-rate synthetic data the PINN recovers all four parameters within 5 % relative error at full labels. From 2 Hz-downsampled synthetic data it recovers $R_s$ and $\psi_f$ within 5 % and $L_d$ and $L_q$ within 15 %. The rate comparison is itself a reported identifiability result.
 - **H4:** at full supervision the PINN neither beats nor trails its MLP control on `pm` by more than 10 % MAE. Physics is insurance, not a data substitute, when data is plentiful.
 - **H5:** the physics floor and ceiling bracket the field. B0 trails every learned model on `pm` by over 20 % MAE at full supervision, and the TNN is the strongest non-PINN temperature model.
 
@@ -102,8 +118,8 @@ The `src/` contract is the ol/ul one exactly. `constants.py` is a stdlib-only le
 | `boosted.py` | `XGBConfig`, `run_xgb_condition` with `hist`, early stopping on validation, boosting-round accounting |
 | `neural_network.py` | `MLPConfig`, `LSTMConfig`, `TransformerConfig`, the one shared torch training loop (budgets, patience, best-val restore, gradient-eval accounting), `set_torch_seed` enabling deterministic algorithms |
 | `tnn.py` | `TNNConfig`, the LPTN-structured recurrent cell, truncated backprop through time over sessions, `run_tnn_condition` |
-| `pinn.py` | `PINNConfig`, MLP trunk plus a temperature-affine softplus-positive parameter head (`R_s(T)` and `ψ_f(T)` through learnable `α_cu`, `α_mag`), composite loss with fixed scale-normalized weights, collocation hooks (exercised by ol), `run_pinn_condition` |
-| `metrics.py` | per-target MAE, RMSE, R², max absolute error, cross-seed aggregation, synthetic parameter-recovery errors |
+| `pinn.py` | `PINNConfig`, MLP trunk plus a temperature-affine softplus-positive parameter head ($R_s(T)$ and $\psi_f(T)$ through learnable $\alpha_{cu}$, $\alpha_{mag}$), composite loss with fixed scale-normalized weights, collocation hooks (exercised by ol), `run_pinn_condition` |
+| `metrics.py` | per-target MAE, RMSE, $R^2$, max absolute error, cross-seed aggregation, synthetic parameter-recovery errors |
 | `report_figures.py` | every figure builder for script 06, one function per figure, saving to `reports/figures/` |
 
 ### Folder structure (the ol/ul root, exactly)

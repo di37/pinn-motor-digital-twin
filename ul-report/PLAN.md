@@ -61,7 +61,7 @@ notebooks/
 |---|---|
 | `constants.py` | sl sibling paths, `K_VALUES`, GMM covariance types, HMM state grid, PCA variance targets, ICA and RP component grids, RP seeds, noise levels, subsample sizes |
 | `run_logging.py` | family pattern, `_result_fields` reads `silhouette`, `bic`, `ari`, `nmi`, `cum_var`, `kurtosis`, `dist_ratio`, `test_mae_pm` |
-| `common.py` | loaders for sl processed data, seeded row subsampling for O(n²) metrics, `write_summary_table` |
+| `common.py` | loaders for sl processed data, seeded row subsampling for $O(n^2)$ metrics, `write_summary_table` |
 | `regimes.py` | regime annotations from inputs only (control mode, load terciles, thermal state), frozen artifact IO |
 | `clustering.py` | K-Means and GMM sweep configs and runners |
 | `hmm.py` | Gaussian HMM per session, state sweep, transition-matrix summaries |
@@ -122,4 +122,4 @@ Clustering and DR run on the working sample (CPU, minutes per condition). Part 4
 | C | Parts 3-4 + notebooks 03-04 | invariants 5-6, 8-10 pass |
 | D | Part 5 + figures + repro + invariants + README | 12/12 PASS |
 
-Risks: silhouette on 700k+ rows is O(n²) (computed on seeded row subsamples, disclosed, same as the family's EC subsampling). Regime annotations could be circular if derived carelessly (they use inputs only, invariant 2 guards it).
+Risks: silhouette on 700k+ rows is $O(n^2)$ (computed on seeded row subsamples, disclosed, same as the family's EC subsampling). Regime annotations could be circular if derived carelessly (they use inputs only, invariant 2 guards it).

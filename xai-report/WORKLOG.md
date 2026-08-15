@@ -4,6 +4,7 @@ Newest day first. Every task that changes this folder gets an entry the same day
 
 ## 2026-08-15
 
+- **Coefficient notation converted to LaTeX.** HYPOTHESES.md carries a notation-only amendment.
 - **H4 restated on learned coefficients.** Dated amendment: the drift claim now reads the learned `α_cu` and `α_mag` directly, with per-band refits demoted to a consistency check.
 - **Hypotheses frozen.** `reports/HYPOTHESES.md` written and frozen with the study's pre-registered hypotheses. The foundation script now verifies it unchanged instead of writing it. Amendments must be dated, never silent.
 - **README.md written.** Family structure, plan-stage status, the zero-test-contact discipline stated.

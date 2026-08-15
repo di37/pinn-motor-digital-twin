@@ -4,6 +4,7 @@ Newest day first. Every task that changes this folder gets an entry the same day
 
 ## 2026-08-15
 
+- **Complexity notation converted to LaTeX.** The two O(n^2) mentions.
 - **Marked as a supporting study.** Paper scope defined in the master plan: ul feeds the appendix, the paper's core claims live in sl, ol, and xai.
 - **Hypotheses frozen.** `reports/HYPOTHESES.md` written and frozen with the study's pre-registered hypotheses. The foundation script now verifies it unchanged instead of writing it. Amendments must be dated, never silent.
 - **README.md written.** Family structure, plan-stage status.

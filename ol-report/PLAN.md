@@ -19,8 +19,8 @@ This is the project's headline study. The exact working sample, splits, preproce
 ## 2. Parts
 
 - **Part 0 - Foundation check (diagnostic).** Confirm the carried-over sample, splits, and recipes match sl-report exactly, ul `00_confirm_foundation` style. Verify the frozen `HYPOTHESES.md` is unchanged.
-- **Part 1 - λ-weighting on the fixed PINN.** Pilot (`01c`) compares fixed scale-normalized weights, uncertainty weighting (learned log-variances), and GradNorm-lite on validation only. The winner is frozen and disclosed (ol pilot-then-freeze). The comparison then runs across 3 seeds.
-- **Part 2 - Physics-term ablation.** Remove `L_vd + L_vq`, `L_torque`, and `L_thermal` one family at a time under the frozen weighting. Which residual carries which target.
+- **Part 1 - $\lambda$-weighting on the fixed PINN.** Pilot (`01c`) compares fixed scale-normalized weights, uncertainty weighting (learned log-variances), and GradNorm-lite on validation only. The winner is frozen and disclosed (ol pilot-then-freeze). The comparison then runs across 3 seeds.
+- **Part 2 - Physics-term ablation.** Remove $L_{vd} + L_{vq}$, $L_{\mathrm{torque}}$, and $L_{\mathrm{thermal}}$ one family at a time under the frozen weighting. Which residual carries which target.
 - **Part 3 - Collocation density.** Physics residuals evaluated on {0×, 1×, 4×} unlabeled samples per labeled one. What unlabeled physics is worth.
 - **Part 4 - The sparsity ladder (headline).** `SPARSITY_LEVELS = (1.00, 0.30, 0.10, 0.03, 0.01)` of training target labels. Labels removed as whole sessions first, then contiguous within-session blocks, seeded and manifest-hashed, identical masks for all seven rungs. Validation and test stay fully labeled and identical across levels. Inputs stay fully available everywhere. Unlabeled training inputs remain usable by every model as input context, and only the PINN can additionally consume them as physics collocation points. Grid: 7 rungs × 5 levels × 3 seeds = 105 conditions under fixed budgets (B0's least-squares fit is deterministic, its three rows per level differ only through the label masks).
 - **Part 5 - Predictive uncertainty.** Seed-ensemble predictions assembled from the Part 4 checkpoints (3 members per condition), plus split-conformal intervals calibrated on validation sessions only. Coverage and interval width evaluated per rung and per sparsity level. A thermal-protection twin needs intervals, not just point estimates, and this part makes the study's 'Uncertainty' literal.
@@ -29,8 +29,8 @@ This is the project's headline study. The exact working sample, splits, preproce
 ## 3. Pre-registered hypotheses
 
 - **H1 (headline):** the PINN degrades most gracefully. At 3 % labels and below it beats every other rung on both `pm` and `torque`, with the margin over the data-driven models growing monotonically as labels shrink. B0 stays flat but never wins, because it cannot learn what the LPTN leaves out.
-- **H2:** adaptive λ weighting beats fixed scale-normalized weights on validation loss and cross-seed stability.
-- **H3:** term ablation is target-specific. Removing `L_thermal` hurts `pm` under sparsity more than removing the voltage residuals hurts torque.
+- **H2:** adaptive $\lambda$ weighting beats fixed scale-normalized weights on validation loss and cross-seed stability.
+- **H3:** term ablation is target-specific. Removing $L_{\mathrm{thermal}}$ hurts `pm` under sparsity more than removing the voltage residuals hurts torque.
 - **H4:** collocation earns its keep only under sparsity. At full labels 0× vs 4× differs by under 5 % MAE, at 3 % labels 4× beats 0× by over 15 %.
 - **H5:** baseline degradation is not seed noise. At 1 % labels every data-driven rung's cross-seed MAE spread is smaller than its gap to the PINN.
 - **H6:** intervals stay honest, and physics keeps them tight. Split-conformal coverage holds within 5 points of the 90 % target for every rung at every level, and the PINN's interval width at 1 % labels is under 1.5× its full-label width while every data-driven rung's exceeds 3×.
@@ -65,12 +65,12 @@ notebooks/
 
 | Module | Contents |
 |---|---|
-| `constants.py` | sl sibling paths, `SPARSITY_LEVELS`, collocation densities, λ-strategy grid, conformal target coverage, budgets carried from sl |
+| `constants.py` | sl sibling paths, `SPARSITY_LEVELS`, collocation densities, $\lambda$-strategy grid, conformal target coverage, budgets carried from sl |
 | `run_logging.py` | family pattern, `_result_fields` reads `val_mae_pm`, `test_mae_pm`, `coverage`, `width`, `grad_evals` |
 | `common.py` | loaders for sl processed data, frozen-recipe import, checkpoint IO shared by every part |
 | `pmsm_physics.py` | copy of the sl module, disclosed in its docstring |
 | `sparsity.py` | mask generation (whole sessions first, then contiguous blocks), manifest hashing, mask IO shared by all seven rungs |
-| `pinn_interventions.py` | λ strategies (fixed, uncertainty-weighted, GradNorm-lite), term-ablation configs, collocation-density configs, each a config plus runner |
+| `pinn_interventions.py` | $\lambda$ strategies (fixed, uncertainty-weighted, GradNorm-lite), term-ablation configs, collocation-density configs, each a config plus runner |
 | `uncertainty.py` | seed-ensemble assembly from Part 4 checkpoints, split-conformal calibration on validation sessions, coverage and width computation |
 | `metrics.py` | ladder aggregation across (rung, level, seed), degradation-curve statistics |
 | `report_figures.py` | figure builders for script 06 |
@@ -79,7 +79,7 @@ notebooks/
 
 ```
 ol-report/
-├── artifacts/                    # sparsity mask manifests, frozen λ winner, calibration tables
+├── artifacts/                    # sparsity mask manifests, frozen lambda winner, calibration tables
 ├── checkpoints/                  # intervention + ladder checkpoints
 ├── notebooks/
 ├── reports/
@@ -107,7 +107,7 @@ ol-report/
 4. Ladder coverage: 105 rows in the Part 4 test table.
 5. Test isolation: a/b column discipline holds for every part.
 6. Recipes frozen: no hyperparameter differs from sl's exported recipes.
-7. λ pilot ran on validation only and its frozen winner is recorded.
+7. $\lambda$ pilot ran on validation only and its frozen winner is recorded.
 8. Multi-seed coverage for every condition.
 9. Deterministic torch enabled.
 10. Conformal calibration used validation sessions only, and the calibration set is disjoint from every mask (source-verified).

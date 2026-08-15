@@ -7,7 +7,7 @@ Freeze rule: no silent edits, ever. If a hypothesis turns out ill-posed, the cor
 ## Hypotheses
 
 - **H1 (headline):** the PINN degrades most gracefully. At 3 % labels and below it beats every other rung on both `pm` and `torque`, with the margin over the data-driven models growing monotonically as labels shrink. B0 stays flat but never wins, because it cannot learn what the LPTN leaves out.
-- **H2:** adaptive λ weighting beats fixed scale-normalized weights on validation loss and cross-seed stability.
+- **H2:** adaptive $\lambda$ weighting beats fixed scale-normalized weights on validation loss and cross-seed stability.
 - **H3:** term ablation is target-specific. Removing `L_thermal` hurts `pm` under sparsity more than removing the voltage residuals hurts torque.
 - **H4:** collocation earns its keep only under sparsity. At full labels 0× vs 4× differs by under 5 % MAE, at 3 % labels 4× beats 0× by over 15 %.
 - **H5:** baseline degradation is not seed noise. At 1 % labels every data-driven rung's cross-seed MAE spread is smaller than its gap to the PINN.
@@ -19,4 +19,4 @@ Each hypothesis is resolved accept, reject, or qualify in the study's closing no
 
 ## Amendments
 
-None.
+- **2026-08-15 - Notation converted to LaTeX math.** Typographic conversion only, no claim, threshold, or wording of any hypothesis changed.
