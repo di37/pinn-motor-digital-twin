@@ -15,3 +15,5 @@ sl-report/data/raw/
 
 # Reference PDFs (arXiv author copies, indexed in research-paper/README.md)
 research-paper/*.pdf
+
+**/*.parquet
