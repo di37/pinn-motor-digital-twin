@@ -2,7 +2,7 @@
 
 How far domain knowledge goes when injected through the inputs instead of the loss. Five feature families from raw signals to physics-derived terms (F0-F4), a consensus-selected compact set capped at 15 features (F5), scaling and transformation comparisons, and a sparsity bridge asking whether engineered inputs deliver part of what physics losses deliver. Evaluators are the frozen sl recipes for XGBoost, MLP, and LSTM, so only the feature set varies.
 
-**Status: planned, not yet executed. Runs after sl-report (needs its data and recipes). Design in [PLAN.md](PLAN.md).**
+**Status: planned, deferred to post-paper execution. Runs after sl, ol, and xai complete. Design in [PLAN.md](PLAN.md).**
 
 ## Setup
 

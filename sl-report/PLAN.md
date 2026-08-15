@@ -7,14 +7,14 @@ Research question:
 
 > **Which model family predicts PMSM torque and internal temperatures best when labels are abundant, and does physics help or hurt when data is not the bottleneck?**
 
-This study owns the project's data foundation (fetch, fingerprint, working sample, splits, EDA) and runs the seven-rung supervised comparison at 100 % supervision, spanning pure physics to pure data: LPTN → XGBoost → MLP → LSTM → Transformer → TNN → PINN. Every later study carries this foundation over unchanged, exactly how ol/ul carried sl's Covertype sample in CS 7641. The PINN enters here as the final rung with fixed scale-normalized physics weights. Its training interventions are ol-report's subject, not this study's.
+This study owns the project's data foundation (fetch, fingerprint, working sample, splits, EDA) and runs the eight-rung supervised comparison at 100 % supervision, from pure physics to pure data and back to structure: LPTN → XGBoost → MLP → LSTM → Transformer → TNN → PINN → structured-coupled hybrid. Every later study carries this foundation over unchanged, exactly how ol/ul carried sl's Covertype sample in CS 7641. The PINN enters here as the final rung with fixed scale-normalized physics weights. Its training interventions are ol-report's subject, not this study's.
 
 ## 1. Data foundation (owned here, used by all five studies)
 
 - **Raw:** Kaggle `wkirgsn/electric-motor-temperature` v3, `measures_v2.csv` (300 MB), already in `data/raw/`. First-look confirmed 1,330,816 rows × 13 columns, 69 sessions, 184.8 h at 2 Hz, physical units, torque 100 % present, zero NaNs, zero duplicates. Script `00a` re-verifies and writes the formal fingerprint.
-- **Working sample:** `SAMPLE_SESSIONS = 40` whole sessions of the 69 (~107 h expected), drawn with `SAMPLING_SEED = 746601`, stratified by session duration and envelope coverage (speed and max `pm` terciles). Whole sessions only, never rows, because physics residuals need the native 2 Hz spacing. Pre-registered and frozen.
-- **Splits:** session-grouped train/val/test of roughly 70/15/15 % of sampled sessions, `SPLIT_SEED = 746602`. No `profile_id` crosses splits. Preprocessing (standardization, EWMA spans) fit on training sessions only. Processed parquet plus `fingerprint.json`, `sample_manifest.json`, `split_manifest.json` are committed under `data/processed/`.
-- **Inputs:** `u_d, u_q, i_d, i_q, motor_speed, ambient, coolant`. **Targets:** `torque, pm, stator_winding, stator_tooth, stator_yoke`, headline `pm` and `torque`.
+- **Working sample (revised 2026-08-15, ~100k rows):** `SAMPLE_SESSIONS = 40` sessions drawn from the 69 with `SAMPLING_SEED = 746601`, stratified by session duration and envelope coverage (speed and max `pm` terciles), then `SAMPLE_TARGET_ROWS = 100,000` filled by one seeded contiguous block per sampled session, block length proportional to session length (roughly 13 % of each). Contiguous blocks, never scattered rows, because the physics residuals and windows need unbroken 2 Hz runs. State-bearing rungs (B0, B5, P2) initialize from the measured temperatures at each block's first row. The known cost, disclosed: thermal arcs longer than a block are cut, which weighs on the long-memory rungs and is reported, not hidden. This spec is a candidate: the pre-registered sample-adequacy gate in [EDA_PLAN.md](EDA_PLAN.md) section 8 (envelope, thermal-arc capture, curvature) is evaluated in notebook 02. If every criterion passes, the 100k spec stands. If any fails, execution pauses at the verdict cell and the decision returns to the user: keep 100k with the failures disclosed as limitations, or move to the full dataset. No intermediate design is pre-committed. Preliminary numbers (arc capture near 0.21 against the 0.6 threshold) suggest the gate will reach that decision point.
+- **Splits (revised 2026-08-16, seventh review):** session-grouped, `SPLIT_SEED = 746602`, the 40 sampled sessions split 19 train / 3 `VAL_STOP` (early stopping, recipe export, ol's pilot) / 9 `VAL_CAL` (reserved untouched for ol's session-level conformal calibration, nine being the minimum for finite 90 % intervals, $n \geq 1/\alpha - 1$) / 9 test (nine so session-level coverage moves in 11.1 % steps and the H6 acceptance is assessable). No `profile_id` crosses splits, and calibration residuals never come from sessions that steered model selection. If the gate decision moves to the full dataset, the split re-scales with `VAL_CAL` and test each keeping at least nine sessions. Preprocessing (standardization, EWMA spans) fit on training sessions only. Processed parquet plus `fingerprint.json`, `sample_manifest.json`, `split_manifest.json` are committed under `data/processed/`.
+- **Inputs:** `u_d, u_q, i_d, i_q, motor_speed, ambient, coolant`. **Targets:** `torque`, `pm`, `stator_winding`, headline `pm` and `torque`. `stator_tooth` and `stator_yoke` were dropped as modeling targets on 2026-08-15 (scope) and stay in the EDA as audited signals.
 
 ## 2. Physics foundation (authoritative module lives here)
 
@@ -51,9 +51,9 @@ Timescale argument: at 2 Hz the electrical dynamics (L/R in ms) are quasi-static
 
 ## 3. Parts
 
-- **Part 0 - Foundation.** Fetch/verify, fingerprint, working sample, splits, EDA, pre-registered hypotheses. The EDA follows its own companion plan, [EDA_PLAN.md](EDA_PLAN.md), built on the OMSCS 7641 EDA guide's nine-phase workflow and four deliverables, adapted to time-series sessions.
-- **Part 1 - Synthetic twin validation (diagnostic).** `src/synthetic_twin.py` simulates drive cycles with known ~50 kW-class parameters. Residual unit tests must pass at ground truth, and the PINN must recover $R_s, L_d, L_q, \psi_f$ in closed loop. No real-data test contact.
-- **Part 2 - The model ladder at full labels.** Fairness rule: every learned model sees the same engineered features and labels. Sequence models add raw windows (W = 128 samples = 64 s). The PINN shares the MLP's exact inputs and trunk, so physics-in-the-loss is the only difference. The ladder now spans the full spectrum from pure physics to pure data, and each rung differs from its neighbors by one capability.
+- **Part 0 - Foundation.** Strictly ordered: fetch and fingerprint, full-file EDA, draw the working sample, sample EDA with the sample-vs-full similarity comparison and the adequacy gate, and only then the train/val/test split. No split exists until the sample has passed the comparison or the gate decision is recorded. The EDA follows its own companion plan, [EDA_PLAN.md](EDA_PLAN.md), built on the OMSCS 7641 EDA guide's nine-phase workflow and four deliverables, adapted to time-series sessions.
+- **Part 1 - Synthetic twin validation (diagnostic).** `src/synthetic_twin.py` simulates drive cycles with known ~50 kW-class parameters. Residual unit tests must pass at ground truth, and both parameter-bearing learners (P and P2) must recover $R_s, L_d, L_q, \psi_f$ in closed loop under the amended per-parameter tolerances. No real-data test contact.
+- **Part 2 - The model ladder at full labels.** Fairness rule: every learned model sees the same engineered features and labels. Sequence models add raw windows (W = 128 samples = 64 s). The PINN shares the MLP's exact inputs and trunk, so physics-in-the-loss is the only difference. B2 and P additionally share an identical labeled-batch schedule (same batches, same order, same optimizer-step count on labeled data), so P's collocation batches are the disclosed intervention itself rather than a hidden optimization advantage, and per-rung gradient evaluations land in the compute accounting. Hyperparameter selection uses the same grouped CV folds for every rung, so no rung's recipe benefits from a luckier validation surface. The ladder now spans the full spectrum from pure physics to pure data, and each rung differs from its neighbors by one capability.
 
 | # | Model | Temporal context | Notes |
 |---|---|---|---|
@@ -64,10 +64,13 @@ Timescale argument: at 2 Hz the electrical dynamics (L/R in ms) are quasi-static
 | B4 | Transformer | raw window + EWMA | small encoder, 2-4 layers |
 | B5 | TNN | ODE state, learned | thermal-neural-network family, the published state of the art on this dataset: LPTN state integrated forward in time with learned conductances, trained by truncated backprop through time |
 | P | PINN | identical to B2 | MLP trunk + fixed scale-normalized physics residuals + a temperature-affine parameter head ($R_{s0}, \psi_{f0}, \alpha_{cu}, \alpha_{mag}, L_d, L_q$ all learnable) |
+| P2 | Structured hybrid | ODE state, learned | the TNN backbone (hard thermal structure) plus soft electromagnetic residuals and the same affine parameter head. Hard thermal structure with soft electromagnetic coupling: P2 minus B5 isolates the coupling, P2 minus P isolates the thermal injection mechanism. No rung has hard electromagnetic structure, which would mean solving the circuit inside the model |
 
-Small pre-registered tuning grids per model on validation only. The tuned recipes are frozen and exported for ol/fe/xai reuse.
-- **Part 2 diagnostics - learning and complexity curves.** For every rung, learning curves (performance vs training-session budget) and model-complexity curves (capacity sweeps: depth for XGBoost, width for the MLP trunk, hidden size for the sequence models), validation only. These were the analytical heart of the coursework sl notebooks and they are first-class parts here.
-- **Part 3 (extra credit) - Activation study.** ReLU, GELU, SiLU, and tanh on the shared MLP trunk, the direct analog of the coursework's activation extra credit.
+Small pre-registered tuning grids per model, selected by 5-fold `GroupKFold` cross-validation over the 19 training sessions, with mean CV validation MAE on `pm` as the selection criterion (the family's `CV_FOLDS = 5` convention). The validation sessions are not used for selection: `VAL_STOP` (3) serves early stopping, the frozen-recipe export, and later ol's pilot, while `VAL_CAL` (9) stays reserved for ol's conformal calibration. The held-out test stays untouched until `02b`. The tuned recipes are frozen and exported for ol/fe/xai reuse.
+- **Part 2 diagnostics - learning and complexity curves.** For every rung, learning curves (performance vs training-session budget) and model-complexity curves (capacity sweeps: depth for XGBoost, width for the MLP trunk, hidden size for the sequence models), computed over the same `GroupKFold` folds so every curve carries a cross-fold spread, the coursework's CV-based curve convention. These were the analytical heart of the coursework sl notebooks and they are first-class parts here.
+- **Coupling diagnostic (pre-registered, the first Phase D deliverable).** The logged signals decide whether the electromagnetic residuals actually reach the temperature heads: the magnitude of $\partial L_{vd,vq} / \partial \hat{T}$ across training, and the $\alpha_{cu}$ and $\alpha_{mag}$ trajectories ($\alpha_{cu}$ converging near $+0.39\,\%/\mathrm{K}$, $\alpha_{mag}$ staying negative, neither collapsing to zero). The gradient paths run through $R_s(\hat{T}_s)$ and $\psi_f(\hat{T}_r)$, and $\psi_f(\hat{T}_r)$ is the only electromagnetic path into the rotor temperature, the headline target. Degeneration means the restated ol H1 has no mechanism. `02a` writes all signals to `reports/tables/` per rung, and the finding is reported before ol runs.
+- **Dimensionality tripwire (pre-registered decision rule, recalibrated 2026-08-15, third reviewer).** The PCA glance stays a reported diagnostic without a threshold, since EWMA features are smoothings of seven signals and any fixed variance cutoff is vacuous under that collinearity. The firing trigger is self-calibrating: at full supervision, a learned rung fires if its train-validation `pm` MAE gap exceeds three times the median gap across all learned rungs, which normalizes away the ordinary session-shift gap that grouped splits produce. The response is cheap by design: a correlation-pruned feature subset (pruned at $|\rho| > 0.95$ on train) run as a small disclosed addendum. fe stays deferred either way.
+- **Part 3 (extra credit, optional) - Activation study.** ReLU, GELU, SiLU, and tanh on the shared MLP trunk, the direct analog of the coursework's activation extra credit. Runs only if the schedule allows after the paper-critical parts.
 
 ## 4. Pre-registered hypotheses (frozen 2026-08-15 in `reports/HYPOTHESES.md`, verified unchanged by `00c`)
 
@@ -75,18 +78,19 @@ Small pre-registered tuning grids per model on validation only. The tuned recipe
 - **H2:** torque is near-algebraic given currents: every model reaches $R^2$ above 0.98 on it.
 - **H3 (amended 2026-08-15, see `reports/HYPOTHESES.md`):** from full-rate synthetic data the PINN recovers all four parameters within 5 % relative error at full labels. From 2 Hz-downsampled synthetic data it recovers $R_s$ and $\psi_f$ within 5 % and $L_d$ and $L_q$ within 15 %. The rate comparison is itself a reported identifiability result.
 - **H4:** at full supervision the PINN neither beats nor trails its MLP control on `pm` by more than 10 % MAE. Physics is insurance, not a data substitute, when data is plentiful.
-- **H5:** the physics floor and ceiling bracket the field. B0 trails every learned model on `pm` by over 20 % MAE at full supervision, and the TNN is the strongest non-PINN temperature model.
+- **H5 (amended 2026-08-15, see `reports/HYPOTHESES.md`):** the physics floor and ceiling bracket the field. B0 trails every learned model on `pm` by over 20 % MAE at full supervision, and the TNN is the strongest rung without electromagnetic coupling.
+- **H6 (added by dated amendment 2026-08-15):** structure and coupling stack. At full supervision P2 matches or beats both B5 and P on `pm` MAE.
 
 ## 5. Scripts and notebooks
 
 ```
 scripts/
 ├── 00a_fetch_and_fingerprint.py  # Part 0: verify raw file, fingerprint, session inventory
-├── 00b_draw_working_sample.py    # Part 0: stratified 40-session sample (SAMPLING_SEED)
+├── 00b_draw_working_sample.py    # Part 0: stratified 40-session block sample, ~100k rows (SAMPLING_SEED)
 ├── 00c_make_splits.py            # Part 0: grouped splits, preprocessing stats, verify frozen HYPOTHESES.md
 ├── 01a_part1_generate_synthetic.py       # Part 1: simulate drive cycles, known parameters
 ├── 01b_part1_synthetic_validation.py     # Part 1: residual sanity + closed-loop recovery (diagnostic)
-├── 02a_part2_ladder_train.py     # Part 2: all 7 rungs × 3 seeds via condition builders (ul 04a pattern)
+├── 02a_part2_ladder_train.py     # Part 2: all 8 rungs × 3 seeds via condition builders (ul 04a pattern)
 ├── 02b_part2_ladder_test.py      # the single test contact for Part 2
 ├── 03_part2_learning_curves.py   # Part 2 diagnostics: session-budget curves per rung (val only)
 ├── 04_part2_complexity_curves.py # Part 2 diagnostics: capacity sweeps per rung (val only)
@@ -99,18 +103,18 @@ notebooks/
 ├── 01_full_dataset_eda.ipynb     # raw-file audit + sampling design (sl 01 analog)
 ├── 02_sample_eda_and_protocol.ipynb  # sample audit, split design, protocol, H1-H5 (sl 02 analog)
 ├── 03_synthetic_twin_validation.ipynb
-├── 04_lptn.ipynb … 10_pinn.ipynb # one per rung, sl per-model arc (04 lptn, 05 xgb, 06 mlp, 07 lstm, 08 transformer, 09 tnn, 10 pinn)
-├── 11_extra_credit_activations.ipynb  # sl 07 analog
-└── 12_discussion.ipynb           # cross-model synthesis + H1-H5 verdicts (sl 08 analog)
+├── 04_lptn.ipynb … 11_structured_pinn.ipynb  # one per rung (04 lptn, 05 xgb, 06 mlp, 07 lstm, 08 transformer, 09 tnn, 10 pinn, 11 structured hybrid)
+├── 12_extra_credit_activations.ipynb  # sl 07 analog (optional)
+└── 13_discussion.ipynb           # cross-model synthesis + H1-H6 verdicts (sl 08 analog)
 ```
 
 The `src/` contract is the ol/ul one exactly. `constants.py` is a stdlib-only leaf, cheap to import from anywhere, with `# region` groups and the sibling sl path resolved relative to `PROJECT_ROOT` behind an "update THIS ONE LINE" comment. `run_logging.py` imports only constants. Domain modules expose a frozen config dataclass plus a `run_<x>_condition(config)` function returning `(frame, summary)`, which is what `logged_run` times and prints. Scripts orchestrate, `src/` implements, notebooks only read saved outputs. Configs are immutable, functions return new objects, and no module holds mutable state.
 
 | Module | Contents |
 |---|---|
-| `constants.py` | paths and dirs, seeds, sample/split sizes, input and target lists, EWMA spans, window length, tuning grids per rung, budgets, `PRIMARY_METRIC`, `REPORT_METRICS` |
+| `constants.py` | paths and dirs, seeds, sample/split sizes, input and target lists, EWMA spans, window length, tuning grids per rung, `CV_FOLDS = 5`, budgets, `PRIMARY_METRIC`, `REPORT_METRICS` |
 | `run_logging.py` | `banner(phase=...)` with this study's protocol lines, `seed_header`, `logged_run`, `log_saved`, `log_saved_artifact`, `log_detail`, `_Tee` + `tee_to_logfile`, 7-day pruning. `_result_fields` reads this study's summary keys (`val_mae_pm`, `test_mae_pm`, `fit_s`, `param_err_pct`) |
-| `common.py` | raw-file fingerprinting, session inventory, stratified session sampling, grouped splits, parquet IO, preprocessing fit on train only, `write_summary_table`, warning silencers |
+| `common.py` | raw-file fingerprinting, session inventory, stratified session sampling, grouped splits, session-grouped `GroupKFold` fold builder with fold manifest, parquet IO, preprocessing fit on train only, `write_summary_table`, warning silencers |
 | `pmsm_physics.py` | `MotorParams` frozen dataclass, algebraic and dynamic voltage residuals, torque residual, LPTN right-hand side, copper and iron loss terms, residual unit-test helpers. The authoritative copy |
 | `synthetic_twin.py` | drive-cycle builders (ramps, steps, soak), ODE integration at high rate, downsampling, synthetic dataset writer with known `MotorParams` |
 | `features.py` | EWMA feature builder, lag and window tensor builders, per-rung feature assembly so every rung reads one shared representation |
@@ -119,6 +123,7 @@ The `src/` contract is the ol/ul one exactly. `constants.py` is a stdlib-only le
 | `neural_network.py` | `MLPConfig`, `LSTMConfig`, `TransformerConfig`, the one shared torch training loop (budgets, patience, best-val restore, gradient-eval accounting), `set_torch_seed` enabling deterministic algorithms |
 | `tnn.py` | `TNNConfig`, the LPTN-structured recurrent cell, truncated backprop through time over sessions, `run_tnn_condition` |
 | `pinn.py` | `PINNConfig`, MLP trunk plus a temperature-affine softplus-positive parameter head ($R_s(T)$ and $\psi_f(T)$ through learnable $\alpha_{cu}$, $\alpha_{mag}$), composite loss with fixed scale-normalized weights, collocation hooks (exercised by ol), `run_pinn_condition` |
+| `structured_pinn.py` | `StructuredPINNConfig` for P2: the TNN thermal cell plus electromagnetic residual heads plus the affine parameter head, truncated backprop through time, `run_structured_pinn_condition` |
 | `metrics.py` | per-target MAE, RMSE, $R^2$, max absolute error, cross-seed aggregation, synthetic parameter-recovery errors |
 | `report_figures.py` | every figure builder for script 06, one function per figure, saving to `reports/figures/` |
 
@@ -155,16 +160,17 @@ sl-report/
 ## 6. Invariants (script 08)
 
 1. Dataset fingerprint matches the raw file.
-2. Working sample is exactly 40 whole sessions from the fingerprinted set, matching `sample_manifest.json`.
+2. Working data matches `sample_manifest.json` exactly (session ids, block offsets, block lengths, row count), where the manifest records the spec the adequacy-gate decision produced, whether the 100k candidate or the full dataset.
 3. Grouped split: no session crosses splits, sizes match `split_manifest.json`.
 4. Preprocessing fit on training sessions only (source-verified, scaler hash matches).
 5. Test isolation: a-tables carry no `test_*` columns, b-tables no `val_*` columns.
 6. Synthetic residual sanity below tolerance at ground truth.
-7. Synthetic parameter recovery within the amended per-parameter H3 tolerances.
-8. All seven rungs × 3 seeds present in the Part 2 test table (B0's fit is deterministic, its rows differ only by seed bookkeeping).
+7. Synthetic parameter recovery within the amended per-parameter H3 tolerances, for both P and P2.
+8. All eight rungs × 3 seeds present in the Part 2 test table (B0's fit is deterministic, its rows differ only by seed bookkeeping).
 9. Recipes identical across seeds per model (no per-seed tuning).
 10. Deterministic torch enabled after seeding.
-11. `HYPOTHESES.md` contains H1-H5 and is unchanged since the 2026-08-15 freeze, dated amendments excepted.
+11. `HYPOTHESES.md` contains H1-H6 (H6 by dated amendment) and is unchanged since the 2026-08-15 freeze, dated amendments excepted.
+12. Selection by grouped CV: every tuned recipe was chosen on `GroupKFold` folds drawn from training sessions only, and no fold contains a validation or test session (source-verified against the committed fold manifest).
 
 ## 7. Budgets, phases, risks
 
@@ -176,12 +182,12 @@ sl-report/
 | A | Scaffold: git init (project root), layout, constants, run_logging, envs | imports clean |
 | B | Part 0 scripts + EDA notebooks 01-02 + frozen-hypotheses verification | invariants 1-4, 11 pass |
 | C | Part 1 synthetic + notebook 03 | invariants 6-7 pass |
-| D | Part 2 ladder (02a/02b) + diagnostics (03, 04) + notebooks 04-10 | invariants 5, 8-10 pass |
-| E | Extra credit (05) + figures + repro + full invariant suite + notebooks 11-12 + README | 11/11 PASS |
+| D | Coupling diagnostic first, then Part 2 ladder (02a/02b) + diagnostics (03, 04) + notebooks 04-11 | invariants 5, 8-10, 12 pass |
+| E | Optional extra credit (05) + figures + repro + full invariant suite + notebooks 12-13 + README | 12/12 PASS |
 
-Risks: per-session torque quality (audited in notebook 01, flagged sessions excluded from torque supervision with disclosure). Laptop compute (sample caps, small tuned-once architectures). PINN instability (residual scale normalization, gradient clipping, synthetic unit tests first). TNN is a from-scratch implementation of a published family, mitigated by truncated backprop through time and by validating its thermal integrator on the synthetic track before real data.
+Risks: per-session torque quality (audited in notebook 01, flagged sessions excluded from torque supervision with disclosure). Laptop compute (sample caps, small tuned-once architectures). PINN instability (residual scale normalization, gradient clipping, synthetic unit tests first). TNN is a from-scratch implementation of a published family, mitigated by truncated backprop through time and by validating its thermal integrator on the synthetic track before real data. P2 is the least de-risked model in the project and is staged strictly after B5 passes that synthetic validation, reusing the same integrator tests plus the Part 1 parameter-recovery gate.
 
 ## 8. Open questions
 
-1. Target scope: all five targets with `pm` + `torque` headline, or trim to three.
+1. Target scope: resolved 2026-08-15, trimmed to `pm` + `torque` + `stator_winding` (second reviewer, scope).
 2. Git: one repository at the project root, initialized in Phase A. Assumed yes.

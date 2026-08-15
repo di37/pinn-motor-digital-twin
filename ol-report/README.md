@@ -1,6 +1,6 @@
 # OL Report - Optimization & Uncertainty: Permanent Magnet Synchronous Motor (PMSM) Physics under Label Scarcity
 
-The project's headline study. The exact working sample, splits, preprocessing, tuned recipes, and checkpoints are carried over unchanged from `../sl-report`, so every result is attributable to the intervention. Five parts: $\lambda$-weighting pilot and comparison on the fixed PINN, physics-term ablation, collocation density, the 105-condition sparsity ladder (7 rungs × 5 label levels × 3 seeds), and predictive uncertainty via seed ensembles with split-conformal intervals.
+The project's headline study. The exact working sample, splits, preprocessing, tuned recipes, and checkpoints are carried over unchanged from `../sl-report`, so every result is attributable to the intervention. Five parts: $\lambda$-weighting pilot and comparison on the fixed PINN, physics-term ablation, collocation density, the 152-condition sparsity ladder (8 rungs × 5 label levels, seeds widened to five at the bottom two), and predictive uncertainty via seed ensembles with split-conformal intervals.
 
 **Status: planned, not yet executed. Runs after sl-report. Design in [PLAN.md](PLAN.md).**
 
@@ -13,7 +13,7 @@ conda activate pinn-ol
 
 ## Data (carried over from sl-report)
 
-This study does not resample or re-split. Scripts read `../sl-report/data/processed/` and the sl frozen recipes and checkpoints. Sparsity masks are generated here, manifest-hashed, and shared across all seven rungs.
+This study does not resample or re-split. Scripts read `../sl-report/data/processed/` and the sl frozen recipes and checkpoints. Sparsity masks are generated here, manifest-hashed, and shared across all eight rungs.
 
 ## Run
 

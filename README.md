@@ -6,7 +6,7 @@ A PMSM digital twin must predict torque and internal temperatures from the signa
 
 The contribution, in one sentence:
 
-> A controlled empirical study of whether coupled electromagnetic-thermal physics improves PMSM digital-twin accuracy, uncertainty, parameter stability, and interpretability as temperature labels become scarce. The comparison runs over a seven-rung ladder spanning pure physics to pure data: LPTN → XGBoost → MLP → LSTM → Transformer → TNN → PINN.
+> A controlled empirical study of whether coupled electromagnetic-thermal physics improves PMSM digital-twin accuracy, uncertainty, parameter stability, and interpretability as temperature labels become scarce. The comparison runs over an eight-rung ladder from pure physics to pure data and back to structure: LPTN → XGBoost → MLP → LSTM → Transformer → TNN → PINN → structured-coupled hybrid. The upper rungs span a grid of thermal injection (soft loss vs hard structure) by electromagnetic coupling (absent vs present as soft residuals), so the hybrid minus the TNN isolates the coupling and the hybrid minus the PINN isolates the thermal mechanism.
 
 **Status: planning complete, execution not started. See [PLAN.md](PLAN.md) for the master plan.**
 
@@ -48,13 +48,13 @@ One repository, five self-contained report folders. Each has its own plan, scrip
 
 | Report | Study | One line |
 |---|---|---|
-| [sl-report](sl-report/) | Supervised Learning | the data foundation and the seven-rung ladder at full supervision |
+| [sl-report](sl-report/) | Supervised Learning | the data foundation and the eight-rung ladder at full supervision |
 | [ol-report](ol-report/) | Optimization & Uncertainty | loss weighting, physics-term ablation, collocation, conformal intervals, and the headline sparsity ladder |
 | [ul-report](ul-report/) | Unsupervised Learning | operating-regime clustering (pointwise and temporal) and dimensionality reduction |
 | [fe-report](fe-report/) | Feature Engineering | engineered, selected, and transformed feature sets, physics through the inputs |
 | [xai-report](xai-report/) | Explainable AI | attributions, physics-native explanations, and whether explanations survive sparsity |
 
-Execution order: sl → ol → ul → fe → xai.
+Execution order for the paper: sl → ol → xai. ul and fe follow post-paper.
 
 ## Data
 

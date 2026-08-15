@@ -1,6 +1,6 @@
 # UL Report - Unsupervised Learning: Structure in the Permanent Magnet Synchronous Motor (PMSM) Operating Space
 
-**Status: PLAN - awaiting approval. Runs after sl-report completes (needs only its data).**
+**Status: PLAN - awaiting approval. Deferred to post-paper execution (2026-08-15, second reviewer, scope): runs after sl, ol, and xai complete.**
 **Date: 2026-08-15. Study 3 of 5, see the [master plan](../PLAN.md).**
 
 Research question:
@@ -20,7 +20,7 @@ Processed sample and splits from `../sl-report/data/processed/`, seeds `(7466, 7
 - **Part 2 - Dimensionality reduction.** PCA (variance targets 0.90/0.95/0.99), ICA (kurtosis and component stability), Randomized Projections (distance preservation over 5 RP seeds). The physics prior says the 7 inputs plus derived features live near a low-dimensional manifold because the dq equations couple them. Component counts justified per method.
 - **Part 3 - Re-clustering after DR.** Same clustering protocol on PCA/ICA/RP representations, one shared protocol table, original vs reduced compared.
 - **Part 4 - Downstream NN after DR.** The sl MLP recipe re-trained on {original, PCA, ICA, RP} representations, only the input dimension changing. Preprocessing and DR fit on the training split only. Held-out test touched exactly once, in `04b`.
-- **Part 5 (extra credit) - Nonlinear manifolds.** UMAP and Isomap on a row subsample, trustworthiness vs PCA, envelope structure visualized.
+- **Part 5 (extra credit, optional) - Nonlinear manifolds.** UMAP and Isomap on a row subsample, trustworthiness vs PCA, envelope structure visualized.
 
 ## 3. Pre-registered hypotheses
 
@@ -122,4 +122,4 @@ Clustering and DR run on the working sample (CPU, minutes per condition). Part 4
 | C | Parts 3-4 + notebooks 03-04 | invariants 5-6, 8-10 pass |
 | D | Part 5 + figures + repro + invariants + README | 12/12 PASS |
 
-Risks: silhouette on 700k+ rows is $O(n^2)$ (computed on seeded row subsamples, disclosed, same as the family's EC subsampling). Regime annotations could be circular if derived carelessly (they use inputs only, invariant 2 guards it).
+Risks: silhouette on the ~100k-row sample is $O(n^2)$ (computed on seeded row subsamples, disclosed, same as the family's EC subsampling). Regime annotations could be circular if derived carelessly (they use inputs only, invariant 2 guards it).

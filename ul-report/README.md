@@ -2,7 +2,7 @@
 
 What structure exists in the PMSM sensor space before labels are used, and what compressed representations cost downstream. K-Means and GMM/EM on the original features, a Gaussian HMM as the temporal method, PCA / ICA / Randomized Projections, re-clustering after each reduction, and the sl MLP re-trained per representation. Targets and physically derived regime annotations (control mode, load, thermal state) enter only after fitting, as external evidence.
 
-**Status: planned, not yet executed. Runs after sl-report (needs only its data). Design in [PLAN.md](PLAN.md).**
+**Status: planned, deferred to post-paper execution. Runs after sl, ol, and xai complete. Design in [PLAN.md](PLAN.md).**
 
 ## Setup
 

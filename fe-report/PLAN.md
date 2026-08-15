@@ -1,6 +1,6 @@
 # FE Report - Feature Engineering, Selection, and Transformation for the Permanent Magnet Synchronous Motor (PMSM) Digital Twin
 
-**Status: PLAN - awaiting approval. Runs after sl-report completes (needs its data and recipes).**
+**Status: PLAN - awaiting approval. Deferred to post-paper execution (2026-08-15, second reviewer, scope): runs after sl, ol, and xai complete. H5's result is pulled into the paper when ready.**
 **Date: 2026-08-15. Study 4 of 5, see the [master plan](../PLAN.md).**
 
 Research question:

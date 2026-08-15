@@ -1,6 +1,6 @@
 # xAI Report - Explaining the Permanent Magnet Synchronous Motor (PMSM) Digital Twin
 
-What each model actually learned about the motor, and whether explanations survive label sparsity. This study trains nothing. It audits the saved checkpoints from sl (full supervision) and ol (sparsity ladder): TreeSHAP and channel-level permutation importance on shared validation windows, the three-way LPTN/TNN/PINN physical-parameter cross-check, physics-residual maps over the operating envelope, temperature-dependent parameter drift, and attribution stability across sparsity levels. The defining discipline: zero test contact anywhere.
+What each model actually learned about the motor, and whether explanations survive label sparsity. This study trains nothing. It audits the saved checkpoints from sl (full supervision) and ol (sparsity ladder): TreeSHAP and channel-level permutation importance on shared validation windows, the four-way LPTN/TNN/PINN/P2 physical-parameter cross-check, physics-residual maps over the operating envelope, temperature-dependent parameter drift, and attribution stability across sparsity levels. The defining discipline: zero test contact anywhere.
 
 **Status: planned, not yet executed. Runs last (needs sl and ol checkpoints). Design in [PLAN.md](PLAN.md).**
 

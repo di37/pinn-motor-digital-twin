@@ -1,6 +1,6 @@
 # SL Report - Supervised Learning: the Permanent Magnet Synchronous Motor (PMSM) Model Ladder at Full Supervision
 
-Seven-rung supervised comparison on the PMSM test-bench dataset, spanning pure physics to pure data: LPTN → XGBoost → MLP → LSTM → Transformer → TNN → PINN. This study owns the project's data foundation (fingerprint, 40-session stratified working sample, session-grouped splits, leakage-safe preprocessing) and every sibling study carries it over unchanged. The PINN enters with fixed scale-normalized physics weights, so its training interventions stay in ol-report. A synthetic twin with known parameters validates the physics residuals and the parameter recovery before any real-data run.
+Eight-rung supervised comparison on the PMSM test-bench dataset, from pure physics to pure data and back to structure: LPTN → XGBoost → MLP → LSTM → Transformer → TNN → PINN → structured-coupled hybrid. This study owns the project's data foundation (fingerprint, a ~100k-row block sample over 40 stratified sessions, session-grouped splits, leakage-safe preprocessing) and every sibling study carries it over unchanged. The PINN enters with fixed scale-normalized physics weights, so its training interventions stay in ol-report. A synthetic twin with known parameters validates the physics residuals and the parameter recovery before any real-data run.
 
 **Status: planned, not yet executed. Design in [PLAN.md](PLAN.md), EDA method in [EDA_PLAN.md](EDA_PLAN.md).**
 
@@ -25,7 +25,7 @@ The pipeline is the numbered scripts in `scripts/`, run in order:
 python scripts/00a_fetch_and_fingerprint.py       && python scripts/00b_draw_working_sample.py   # Part 0
 python scripts/00c_make_splits.py                                                                # Part 0 + verify frozen HYPOTHESES.md
 python scripts/01a_part1_generate_synthetic.py    && python scripts/01b_part1_synthetic_validation.py  # Part 1
-python scripts/02a_part2_ladder_train.py          && python scripts/02b_part2_ladder_test.py     # Part 2 (7 rungs x 3 seeds)
+python scripts/02a_part2_ladder_train.py          && python scripts/02b_part2_ladder_test.py     # Part 2 (8 rungs x 3 seeds)
 python scripts/03_part2_learning_curves.py        && python scripts/04_part2_complexity_curves.py  # Part 2 diagnostics
 python scripts/05_extra_credit_activations.py                                                    # Part 3 EC
 
@@ -34,7 +34,7 @@ python scripts/07_build_repro_artifacts.py
 python scripts/08_verify_invariants.py            # prints PASS/FAIL, 11 invariants
 ```
 
-Notebooks 01-12 present the same results with narrative (01 full-dataset EDA, 02 sample EDA and protocol, 03 synthetic validation, 04-10 one per rung, 11 activation extra credit, 12 discussion). Open from `notebooks/` and run top to bottom.
+Notebooks 01-13 present the same results with narrative (01 full-dataset EDA, 02 sample EDA and protocol, 03 synthetic validation, 04-11 one per rung, 12 activation extra credit, 13 discussion). Open from `notebooks/` and run top to bottom.
 
 ## Outputs
 

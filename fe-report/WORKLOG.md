@@ -4,6 +4,7 @@ Newest day first. Every task that changes this folder gets an entry the same day
 
 ## 2026-08-15
 
+- **Deferred to post-paper execution.** Second reviewer, scope. H5 still feeds the paper when ready.
 - **F3 feature formulas converted to LaTeX.** Current magnitude, copper-loss proxy, apparent power, speed-current products.
 - **Marked as a supporting study, H5 excepted.** Paper scope defined in the master plan: fe feeds the appendix, except H5 which the paper draws on directly.
 - **Hypotheses frozen.** `reports/HYPOTHESES.md` written and frozen with the study's pre-registered hypotheses. The foundation script now verifies it unchanged instead of writing it. Amendments must be dated, never silent.
