@@ -34,7 +34,7 @@ python scripts/07_build_repro_artifacts.py
 python scripts/08_verify_invariants.py            # prints PASS/FAIL, 11 invariants
 ```
 
-Notebooks 01-13 present the same results with narrative (01 full-dataset EDA, 02 sample EDA and protocol, 03 synthetic validation, 04-11 one per rung, 12 activation extra credit, 13 discussion). Open from `notebooks/` and run top to bottom.
+Notebooks 01-13 present the same results with narrative (01 full-dataset EDA, 02 sample EDA and protocol, 02b split freeze on the full dataset after the gate decision, 03 synthetic validation, 04-11 one per rung, 12 activation extra credit, 13 discussion). Open from `notebooks/` and run top to bottom.
 
 ## Outputs
 

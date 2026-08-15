@@ -79,3 +79,5 @@ The 100k block sample is a candidate, not a commitment. Notebook 02 evaluates it
 - **G3, curvature:** in at least half the blocks, a first-order response fit beats a straight line on `pm` by ΔAIC of 10 or more, so the thermal parameters have curvature to bite on.
 
 If any criterion fails, execution pauses at the verdict cell and the decision returns to the user with the measured numbers in hand: keep the 100k sample and disclose the failed criteria as limitations, or move to the full dataset. No intermediate fallback design is pre-committed (removed 2026-08-15 by user decision). If all three pass, the 100k spec stands. Either way, the numbers, the decision, and the chosen spec land in the notebook 02 verdict cell and `sample_manifest.json`, and the worklog records it the same day.
+
+**Outcome (2026-08-16).** Measured on the real draw: G1 failed (envelope Jaccard 0.942 passed, coolant quantile shift 0.122 against 0.05), G2 failed (arc capture 0.253 against 0.6), G3 passed (0.625). The user chose the full dataset. `00c` froze the re-scaled 32/5/16/16 grouped split, and notebook 02b verifies the freeze.

@@ -12,26 +12,26 @@ The contribution, in one sentence:
 
 ## The physics-informed twin
 
-```
-                             PMSM
-                               │
-                ┌──────────────┴──────────────┐
-                ↓                             ↓
-        Electromagnetic                    Thermal
-           dynamics                        dynamics
-                ↓                             ↓
-        u_d, u_q, i_d, i_q         pm (rotor magnet temp)
-        motor speed                stator winding / tooth / yoke
-                                   coolant, ambient
-                │                             │
-                └──────────────┬──────────────┘
-                               ↓
-                             PINN
-                               ↓
-                ┌──────────────┼──────────────┐
-                ↓              ↓              ↓
-             Torque       Temperatures    Parameters
-                                          R_s, L_d, L_q, ψ_f
+```mermaid
+flowchart LR
+    IN["<b>Inputs</b><br/>free inverter signals<br/>u_d, u_q, i_d, i_q<br/>motor_speed, coolant, ambient"]
+    FE["<b>Feature layer</b><br/>EWMA spans + raw windows<br/>reset at session boundaries<br/>stats fit on train only"]
+    MODEL["<b>Model rung</b> (one of eight)<br/>LPTN | XGBoost | MLP | LSTM<br/>Transformer | TNN | PINN | structured hybrid"]
+    PRED["<b>Predictions</b><br/>torque, pm, stator_winding"]
+    UQ["<b>Uncertainty</b><br/>session-level conformal intervals<br/>(90/90, calibrated on VAL_CAL)"]
+    PARAMS["<b>Identified physics</b><br/>R_s, L_d, L_q, ψ_f<br/>α_cu, α_mag"]
+
+    subgraph TRAIN["training-time physics, coupled rungs P and P2 only"]
+        HEAD["temperature-affine parameter head<br/>R_s(T_s), ψ_f(T_r) with learnable α_cu, α_mag"]
+        RES["residuals L_vd, L_vq, L_torque, L_thermal<br/>evaluated on labeled and collocation rows"]
+        HEAD --> RES
+    end
+
+    IN --> FE --> MODEL --> PRED
+    MODEL --> UQ
+    MODEL -. predicted temperatures .-> HEAD
+    RES -. gradient pressure .-> MODEL
+    HEAD --> PARAMS
 ```
 
 The training loss is one supervised term plus four physics residuals, weighted per term:

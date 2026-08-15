@@ -4,6 +4,10 @@ Newest day first. Every task that changes this folder gets an entry the same day
 
 ## 2026-08-16
 
+- **Part 0 closed: full dataset, split frozen and verified.** gate_decision.json recorded, 00c ran (32/5/16/16, manifests + folds + scaler + hypotheses hash), notebook 02b verifies the freeze live with asserts and balance figures. Split parquets total ~112 MB, all files under GitHub limits.
+- **eda_data_dictionary.csv rebuilt.** Descriptions added (dq-frame quantities, thermocouple placements, telemetry-only pm), valid-vs-observed ranges separated with a violations check, assumptions per column. Notebook 01 section 3 patched and re-executed.
+- **Part 0 run to the gate.** Fingerprint clean, sample drawn per manifest, both EDA notebooks executed with saved figures and deliverable tables. Real findings: 134-minute constant-torque soak segments classified as test design, one row-count collision cleared as different drive cycles, PCA glance needs ~6 components for 95 %. Gate: G1 fails on coolant shift, G2 fails on arc capture 0.253, G3 passes. 00c written and guarded, awaiting the recorded decision.
+- **Phase A complete.** Environment files written and pinn-sl built, folder tree scaffolded, `constants.py` and `run_logging.py` in place, imports clean under the new environment, MPS available.
 - **Splits revised to 19/3/9/9.** GroupKFold now folds over 19 training sessions. Re-scaling rule added: VAL_CAL and test never drop below nine sessions under any gate outcome.
 
 ## 2026-08-15
